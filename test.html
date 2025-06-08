@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mental Health Terms</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: 'Times New Roman', serif;
+      font-style: italic;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      transition: background-color 0.5s ease, color 0.5s ease;
+    }
+
+    #terms-container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .term {
+      position: absolute;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease-in-out;
+      text-align: center;
+      white-space: nowrap;
+      font-size: clamp(2rem, 8vw, 4rem);
+      max-width: 90vw;
+    }
+
+    .term.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .term.hide {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+
+    #start-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      font-size: 1.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <div id="start-overlay">Başlamak için tıklayın</div>
+
+  <div id="terms-container">
+    <div class="term">Depresyon</div>
+    <div class="term">Anksiyete</div>
+    <div class="term">Sanrı</div>
+    <div class="term">Madde Bağımlılığı</div>
+    <div class="term">Uyku Bozukluğu</div>
+    <div class="term">Kendine Zarar Verme</div>
+    <div class="term">Travma Sonrası Stres</div>
+    <div class="term">Panik Atak</div>
+    <div class="term">İntihar Düşüncesi</div>
+  </div>
+
+  <script>
+    const terms = document.querySelectorAll('.term');
+    const audio1 = new Audio('./1.mp3');
+    const audio2 = new Audio('./2.mp3');
+
+    let currentIndex = 0;
+
+    function startSequence() {
+      document.getElementById('start-overlay').style.display = 'none';
+
+      audio1.play().then(() => {
+        showTermsSequentially();
+      }).catch(err => {
+        console.error('1.mp3 başlatılamadı:', err);
+      });
+    }
+
+    function showTermsSequentially() {
+      if (currentIndex < terms.length) {
+        if (currentIndex > 0) {
+          terms[currentIndex - 1].classList.remove('show');
+          terms[currentIndex - 1].classList.add('hide');
+        }
+
+        terms[currentIndex].classList.add('show');
+        currentIndex++;
+        setTimeout(showTermsSequentially, 1000);
+      } else {
+        // Son kelimeden 1 saniye sonra ekran beyaz olsun ve 2.mp3 başlasın
+        setTimeout(() => {
+          document.body.style.backgroundColor = 'white';
+          document.body.style.color = 'black';
+          terms.forEach(term => term.classList.remove('show'));
+          audio2.play();
+        }, 1000);
+      }
+    }
+
+    // Tıklama ile başlat
+    document.getElementById('start-overlay').addEventListener('click', startSequence);
+  </script>
+</body>
+</html>
